@@ -1,9 +1,9 @@
 # Site settings
-title: Your Title Here
-description: > # this means to ignore newlines until "baseurl:"
-baseurl: "/creative-theme-jekyll-new/" # the subpath of your site, e.g. /blog/
-url: "" # the base hostname & protocol for your site
-author: Copyright &copy; 2019 - Start Bootstrap
+title: Devansh's Portfolio
+description: My jekyll portfolio
+baseurl: "" # the subpath of your site, e.g. /blog/
+url: "devansh-srivastava.github.io" # the base hostname & protocol for your site
+author: Devansh Srivastava
 lang: en_US
 
 # Build settings
