@@ -10,7 +10,7 @@ function simplify(strokes){
 const $ = id => document.getElementById(id);
 const palette = {paper:'#f3ede3',ink:'#453c48',purple:'#7849ef',muted:'#857985',lavender:'#e6ddf1'};
 let owner = {name:'Devansh',strokes:[]};
-const signatureAsset = new Image(); signatureAsset.src='signature.png?v=2';
+const signatureAsset = new Image(); signatureAsset.src='signature.png?v=3';
 const signaturePayload = new URLSearchParams(location.hash.slice(1)).get('pact');
 function validStrokes(strokes) {
   return Array.isArray(strokes) && strokes.length <= 100 && strokes.every(s => Array.isArray(s) && s.length <= 1200 && s.every(p => Array.isArray(p) && p.length === 2 && p.every(n => Number.isFinite(n) && n >= 0 && n <= 1)));
@@ -105,7 +105,7 @@ function signatureImage(strokes,aspect=1) {
 }
 function updateOwner() {
   const target=$('owner-sign-display');target.replaceChildren();
-  const img=new Image(); img.src='signature.png?v=2'; img.alt='Devansh’s handwritten signature'; img.className='owner-sig'; target.append(img);
+  const img=new Image(); img.src='signature.png?v=3'; img.alt='Devansh’s handwritten signature'; img.className='owner-sig'; target.append(img);
   $('owner-sign-label').textContent='DEVANSH · HANDWRITTEN SIGNATURE'; return;
   if(owner.strokes.some(s=>s.length>=3)) {
     const img=new Image();img.src=signatureImage(owner.strokes,owner.aspect || 1);img.alt=owner.name+'’s drawn signature';img.className='owner-sig';target.append(img);
