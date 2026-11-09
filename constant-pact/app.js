@@ -10,6 +10,7 @@ function simplify(strokes){
 const $ = id => document.getElementById(id);
 const palette = {paper:'#f3ede3',ink:'#453c48',purple:'#7849ef',muted:'#857985',lavender:'#e6ddf1'};
 let owner = {name:'Devansh',strokes:[]};
+const signatureAsset = new Image(); signatureAsset.src='signature.png';
 const signaturePayload = new URLSearchParams(location.hash.slice(1)).get('pact');
 function validStrokes(strokes) {
   return Array.isArray(strokes) && strokes.length <= 100 && strokes.every(s => Array.isArray(s) && s.length <= 1200 && s.every(p => Array.isArray(p) && p.length === 2 && p.every(n => Number.isFinite(n) && n >= 0 && n <= 1)));
@@ -104,6 +105,8 @@ function signatureImage(strokes,aspect=1) {
 }
 function updateOwner() {
   const target=$('owner-sign-display');target.replaceChildren();
+  const img=new Image(); img.src='signature.png'; img.alt='Devansh’s handwritten signature'; img.className='owner-sig'; target.append(img);
+  $('owner-sign-label').textContent='DEVANSH · HANDWRITTEN SIGNATURE'; return;
   if(owner.strokes.some(s=>s.length>=3)) {
     const img=new Image();img.src=signatureImage(owner.strokes,owner.aspect || 1);img.alt=owner.name+'’s drawn signature';img.className='owner-sig';target.append(img);
     $('owner-sign-label').textContent=owner.name.toUpperCase();
@@ -137,6 +140,7 @@ $('save-owner').onclick=async()=>{
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 async function createKeepsake() {
   if(document.fonts) await Promise.race([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,2500))]);
+  if(!signatureAsset.complete) await new Promise((resolve,reject)=>{signatureAsset.onload=resolve;signatureAsset.onerror=()=>reject(new Error('Signature image failed to load.'));});
   const canvas=document.createElement('canvas');canvas.width=1800;canvas.height=1125;
   const c=canvas.getContext('2d');c.fillStyle=palette.paper;c.fillRect(0,0,1800,1125);
   c.fillStyle=palette.lavender;c.beginPath();c.ellipse(1750,220,250,330,-.3,0,Math.PI*2);c.fill();
@@ -152,10 +156,10 @@ async function createKeepsake() {
   c.fillStyle=palette.purple;c.font='41px "Caveat",cursive';c.fillText('officially each other’s constant.',110,690);
   const ownDrawn=owner.strokes.some(s=>s.length>=3);
   if(ownDrawn)paintFitted(c,physicalStrokes(owner.strokes,owner.aspect || 1),115,760,660,170,palette.purple,4.5);
-  else {c.fillStyle=palette.purple;c.font='76px "Caveat",cursive';c.fillText(owner.name,130,875,620);}
+  else {const maxW=630,maxH=160,scale=Math.min(maxW/signatureAsset.width,maxH/signatureAsset.height),w=signatureAsset.width*scale,h=signatureAsset.height*scale;c.drawImage(signatureAsset,115,765+(maxH-h)/2,w,h);}
   paintFitted(c,physicalStrokes(friendPad.strokes,friendPad.aspect),985,760,660,170,palette.purple,4.5);
   c.strokeStyle='#bdb1c5';c.lineWidth=2;c.beginPath();c.moveTo(110,943);c.lineTo(780,943);c.moveTo(980,943);c.lineTo(1650,943);c.stroke();
-  c.fillStyle=palette.muted;c.font='500 18px "DM Sans",sans-serif';c.fillText(owner.name.toUpperCase()+(ownDrawn?'':' · TYPED SIGNATURE'),110,982,670);c.fillText('YOUR CONSTANT',980,982);
+  c.fillStyle=palette.muted;c.font='500 18px "DM Sans",sans-serif';c.fillText(owner.name.toUpperCase()+(ownDrawn?'':' · HANDWRITTEN SIGNATURE'),110,982,670);c.fillText('YOUR CONSTANT',980,982);
   const date=new Intl.DateTimeFormat('en-GB',{day:'numeric',month:'long',year:'numeric'}).format(new Date());
   c.font='400 16px "DM Sans",sans-serif';c.fillText('SIGNED '+date.toUpperCase(),110,1040);
   c.fillStyle=palette.purple;c.font='27px "Caveat",cursive';c.fillText('you + me',1510,1040);
